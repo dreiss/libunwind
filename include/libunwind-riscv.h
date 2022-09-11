@@ -61,6 +61,8 @@ typedef int64_t unw_sword_t;
 typedef double unw_tdep_fpreg_t;
 #elif __riscv_flen == 32
 typedef float unw_tdep_fpreg_t;
+#elif defined(__riscv_float_abi_soft)
+typedef struct {} unw_tdep_fpreg_t;
 #else
 # error "Unsupported RISC-V floating-point size"
 #endif
