@@ -578,7 +578,7 @@ if (stackerror)                                 \
 
         case DW_OP_neg:
           Debug (15, "OP_neg\n");
-          push (~pop () + 1);
+          push (1 + ~pop ());
           break;
 
         case DW_OP_not:
