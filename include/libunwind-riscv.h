@@ -40,8 +40,6 @@ extern "C" {
 #include <inttypes.h>
 #ifndef CONFIG_EMBEDDED_SYS
 #include <ucontext.h>
-#else
-typedef struct {} ucontext_t;
 #endif
 
 #define UNW_TARGET              riscv
@@ -171,8 +169,18 @@ typedef struct unw_tdep_save_loc
   }
 unw_tdep_save_loc_t;
 
+#ifndef CONFIG_EMBEDDED_SYS
 /* On riscv, we can directly use ucontext_t as the unwind context.  */
 typedef ucontext_t unw_tdep_context_t;
+#else
+typedef struct {
+  unw_word_t regs[32];
+#if !defined(__riscv_float_abi_soft)
+  unw_tdep_fpreg_t fpregs[32];
+  uint32_t fcsf;
+#endif
+} unw_tdep_context_t;
+#endif
 
 typedef struct
   {
