@@ -161,7 +161,6 @@ dwarf_getfp (struct dwarf_cursor *c, dwarf_loc_t loc, unw_fpreg_t *val)
 {
   char *valp = (char *) &val;
   unw_word_t addr;
-  int ret;
 
   if (DWARF_IS_NULL_LOC (loc))
     return -UNW_EBADREG;
@@ -185,7 +184,6 @@ dwarf_putfp (struct dwarf_cursor *c, dwarf_loc_t loc, unw_fpreg_t val)
 {
   char *valp = (char *) &val;
   unw_word_t addr;
-  int ret;
 
   if (DWARF_IS_NULL_LOC (loc))
     return -UNW_EBADREG;
