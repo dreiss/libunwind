@@ -218,7 +218,7 @@ AM_CONDITIONAL(USE_DWARF, [test x$use_dwarf = xyes])
 AC_MSG_RESULT([$use_dwarf])
 
 AC_MSG_CHECKING([whether to restrict build to remote support])
-if test x$target_arch != x$host_arch; then
+if test x$target_arch != justdoit; then
   CPPFLAGS="${CPPFLAGS} -DUNW_REMOTE_ONLY"
   remote_only=yes
 else
