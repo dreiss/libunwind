@@ -174,6 +174,10 @@ dwarf_getfp (struct dwarf_cursor *c, dwarf_loc_t loc, unw_fpreg_t *val)
 #if __riscv_xlen == __riscv_flen
   return (*c->as->acc.access_mem) (c->as, addr, (unw_word_t *) valp,
                                        0, c->as_arg);
+#elif defined(__riscv_float_abi_soft)
+  (void)valp;
+  (void)addr;
+  return -UNW_EINVAL;
 #else
 # error "FIXME"
 #endif
@@ -197,6 +201,10 @@ dwarf_putfp (struct dwarf_cursor *c, dwarf_loc_t loc, unw_fpreg_t val)
 #if __riscv_xlen == __riscv_flen
   return (*c->as->acc.access_mem) (c->as, addr, (unw_word_t *) valp,
                                        1, c->as_arg);
+#elif defined(__riscv_float_abi_soft)
+  (void)valp;
+  (void)addr;
+  return -UNW_EINVAL;
 #else
 # error "FIXME"
 #endif
