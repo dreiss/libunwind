@@ -29,7 +29,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 void
 unw_flush_cache (unw_addr_space_t as, unw_word_t lo, unw_word_t hi)
 {
-#if !UNW_TARGET_IA64
+#if !UNW_TARGET_IA64 && !defined(CONFIG_EMBEDDED_SYS)
   struct unw_debug_frame_list *w = as->debug_frames;
 
   while (w)

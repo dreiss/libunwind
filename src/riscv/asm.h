@@ -40,6 +40,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 # define SZFREG 4
 # define STORE_FP fsw
 # define LOAD_FP flw
+#elif defined(__riscv_float_abi_soft)
+// Don't need these.
 #else
 # error "Unsupported RISC-V floating-point length"
 #endif

@@ -28,13 +28,21 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #ifndef LIBUNWIND_H
 #define LIBUNWIND_H
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
 
 #include <sys/types.h>
 #include <inttypes.h>
+#ifndef CONFIG_EMBEDDED_SYS
 #include <ucontext.h>
+#else
+typedef struct {} ucontext_t;
+#endif
 
 #define UNW_TARGET              riscv
 #define UNW_TARGET_RISCV      1

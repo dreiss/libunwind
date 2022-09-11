@@ -24,14 +24,6 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
-#include <fcntl.h>
-#include <unistd.h>
-
-#include <sys/mman.h>
-#include <sys/stat.h>
-
-#include "libunwind_i.h"
-
 #if UNW_ELF_CLASS == UNW_ELFCLASS32
 # define ELF_W(x)       ELF32_##x
 # define Elf_W(x)       Elf32_##x
@@ -41,6 +33,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 # define Elf_W(x)       Elf64_##x
 # define elf_w(x)       _Uelf64_##x
 #endif
+
+#ifndef CONFIG_EMBEDDED_SYS
+
+#include <fcntl.h>
+#include <unistd.h>
+
+#include <sys/mman.h>
+#include <sys/stat.h>
+
+#include "libunwind_i.h"
 
 extern int elf_w (get_proc_name) (unw_addr_space_t as,
                                   pid_t pid, unw_word_t ip,
@@ -99,3 +101,5 @@ elf_map_image (struct elf_image *ei, const char *path)
 
   return 0;
 }
+
+#endif

@@ -25,7 +25,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "unwind_i.h"
 #include "offsets.h"
+#ifndef CONFIG_EMBEDDED_SYS
 #include <ucontext.h>
+#endif
 
 #ifndef UNW_REMOTE_ONLY
 
