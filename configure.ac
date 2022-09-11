@@ -342,6 +342,15 @@ AS_IF([test x$enable_per_thread_cache = xyes], [
 	[Define to 1 if --enable-per-thread-cache])
 ])
 
+AC_MSG_CHECKING([whether to build for embedded systems])
+AC_ARG_ENABLE([embedded-sys],
+AS_HELP_STRING([--enable-embedded-sys], [build for embedded systems (no signals, mmap, etc.) (default: disabled)]))
+AC_MSG_RESULT([$enable_embedded_sys])
+AS_IF([test x$enable_embedded_sys = xyes], [
+  AC_DEFINE(CONFIG_EMBEDDED_SYS, 1,
+	[Define to 1 if --enable-embedded-sys])
+])
+
 AC_MSG_CHECKING([for Intel compiler])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[#ifndef __INTEL_COMPILER
 #error choke me
