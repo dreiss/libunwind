@@ -38,6 +38,9 @@ unw_create_addr_space (unw_accessors_t *a, int byte_order)
   /*
    * We only support little-endian for now.
    */
+#if !defined(__LITTLE_ENDIAN) && defined(LITTLE_ENDIAN)
+# define __LITTLE_ENDIAN LITTLE_ENDIAN
+#endif
   if (byte_order != 0 && byte_order != __LITTLE_ENDIAN)
     return NULL;
 

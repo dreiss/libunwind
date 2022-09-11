@@ -149,21 +149,32 @@ target_is_big_endian()
 # define UNW_DEBUG      0
 #endif
 
+#ifdef _POSIX_THREADS
 /* Make it easy to write thread-safe code which may or may not be
    linked against libpthread.  The macros below can be used
    unconditionally and if -lpthread is around, they'll call the
    corresponding routines otherwise, they do nothing.  */
 
-#pragma weak pthread_mutex_init
-#pragma weak pthread_mutex_lock
-#pragma weak pthread_mutex_unlock
+# pragma weak pthread_mutex_init
+# pragma weak pthread_mutex_lock
+# pragma weak pthread_mutex_unlock
 
-#define mutex_init(l)                                                   \
+# define mutex_init(l)                                                    \
         (pthread_mutex_init != NULL ? pthread_mutex_init ((l), NULL) : 0)
-#define mutex_lock(l)                                                   \
+# define mutex_lock(l)                                                    \
         (pthread_mutex_lock != NULL ? pthread_mutex_lock (l) : 0)
-#define mutex_unlock(l)                                                 \
+# define mutex_unlock(l)                                                  \
         (pthread_mutex_unlock != NULL ? pthread_mutex_unlock (l) : 0)
+
+#else
+// XXX zephyr locks?
+static inline int _fake_mutex_do_nothing() { return 0; }
+# define mutex_init(l) _fake_mutex_do_nothing()
+# define mutex_lock(l) _fake_mutex_do_nothing()
+# define mutex_unlock(l) _fake_mutex_do_nothing()
+# define PTHREAD_MUTEX_INITIALIZER -1
+#endif
+
 
 #define UNWI_OBJ(fn)      UNW_PASTE(UNW_PREFIX,UNW_PASTE(I,fn))
 #define UNWI_ARCH_OBJ(fn) UNW_PASTE(UNW_PASTE(UNW_PASTE(_UI,UNW_TARGET),_), fn)
@@ -216,7 +227,8 @@ do {                                            \
 #ifndef MAP_ANONYMOUS
 # define MAP_ANONYMOUS MAP_ANON
 #endif
-#define GET_MEMORY(mem, size)                                               \
+#ifndef CONFIG_EMBEDDED_SYS
+# define GET_MEMORY(mem, size)                                              \
 do {                                                                        \
   /* Hopefully, mmap() goes straight through to a system call stub...  */   \
   mem = mmap (NULL, size, PROT_READ | PROT_WRITE,                           \
@@ -224,6 +236,12 @@ do {                                                                        \
   if (mem == MAP_FAILED)                                                    \
     mem = NULL;                                                             \
 } while (0)
+#else
+# define GET_MEMORY(mem, size)   \
+do {                             \
+  mem = NULL; /*XXX*/            \
+} while (0)
+#endif
 
 #define unwi_find_dynamic_proc_info     UNWI_OBJ(find_dynamic_proc_info)
 #define unwi_extract_dynamic_proc_info  UNWI_OBJ(extract_dynamic_proc_info)
@@ -325,8 +343,13 @@ struct elf_dyn_info
 
 static inline void invalidate_edi (struct elf_dyn_info *edi)
 {
-  if (edi->ei.image)
+  if (edi->ei.image) {
+#ifndef CONFIG_EMBEDDED_SYS
     munmap (edi->ei.image, edi->ei.size);
+#else
+    // This should never happen.  Abort maybe?
+#endif
+  }
   memset (edi, 0, sizeof (*edi));
   edi->di_cache.format = -1;
   edi->di_debug.format = -1;

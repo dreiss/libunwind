@@ -570,6 +570,7 @@ dwarf_flush_rs_cache (struct dwarf_rs_cache *cache)
     cache->links = cache->default_links;
     cache->log_size = DWARF_DEFAULT_LOG_UNW_CACHE_SIZE;
   } else {
+#ifndef CONFIG_EMBEDDED_SYS
     if (cache->hash && cache->hash != cache->default_hash)
       munmap(cache->hash, DWARF_UNW_HASH_SIZE(cache->prev_log_size)
                            * sizeof (cache->hash[0]));
@@ -585,6 +586,11 @@ dwarf_flush_rs_cache (struct dwarf_rs_cache *cache)
                                 * sizeof (cache->buckets[0]));
     GET_MEMORY(cache->links, DWARF_UNW_CACHE_SIZE(cache->log_size)
                                 * sizeof (cache->links[0]));
+#else
+    cache->hash = NULL;
+    cache->buckets = NULL;
+    cache->links = NULL;
+#endif
     if (!cache->hash || !cache->buckets || !cache->links)
       {
         Debug (1, "Unable to allocate cache memory");

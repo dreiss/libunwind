@@ -26,6 +26,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "libunwind_i.h"
 
+#ifndef CONFIG_EMBEDDED_SYS
+
 #include <stdio.h>
 #include <sys/param.h>
 #include <limits.h>
@@ -485,3 +487,5 @@ elf_w (load_debuglink) (const char* file, struct elf_image *ei, int is_local)
 
   return 0;
 }
+
+#endif
