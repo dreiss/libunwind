@@ -569,7 +569,7 @@ struct dwarf_callback_data
 /* ptr is a pointer to a dwarf_callback_data structure and, on entry,
    member ip contains the instruction-pointer we're looking
    for.  */
-HIDDEN int
+static int
 dwarf_callback (struct dl_phdr_info *info, size_t size, void *ptr)
 {
   struct dwarf_callback_data *cb_data = ptr;
