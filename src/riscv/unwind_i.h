@@ -41,6 +41,8 @@ extern void riscv_local_addr_space_init (void);
 extern int riscv_local_resume (unw_addr_space_t as,
                                 unw_cursor_t *cursor,
                                 void *arg);
+#ifndef CONFIG_EMBEDDED_SYS
 extern int setcontext (const ucontext_t *ucp);
+#endif
 
 #endif /* unwind_i_h */

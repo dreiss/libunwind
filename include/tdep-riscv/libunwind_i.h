@@ -83,10 +83,10 @@ struct cursor
     unw_word_t sigcontext_sp;
     unw_word_t sigcontext_pc;
     int validate;
-    ucontext_t *uc;
+    unw_tdep_context_t *uc;
   };
 
-static inline ucontext_t *
+static inline unw_tdep_context_t *
 dwarf_get_uc(const struct dwarf_cursor *cursor)
 {
   const struct cursor *c = (struct cursor *) cursor->as_arg;
@@ -296,7 +296,7 @@ extern void tdep_init_mem_validate (void);
 extern int tdep_search_unwind_table (unw_addr_space_t as, unw_word_t ip,
                                      unw_dyn_info_t *di, unw_proc_info_t *pi,
                                      int need_unwind_info, void *arg);
-extern void *tdep_uc_addr (ucontext_t *uc, int reg);
+extern void *tdep_uc_addr (unw_tdep_context_t *uc, int reg);
 extern int tdep_get_elf_image (struct elf_image *ei, pid_t pid, unw_word_t ip,
                                unsigned long *segbase, unsigned long *mapoff,
                                char *path, size_t pathlen);

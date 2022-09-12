@@ -95,6 +95,7 @@ get_dyn_info_list_addr (unw_addr_space_t as, unw_word_t *dyn_info_list_addr,
   return 0;
 }
 
+#ifndef CONFIG_EMBEDDED_SYS
 // Memory validation routines are from aarch64
 
 static int mem_validate_pipe[2] = {-1, -1};
@@ -169,7 +170,6 @@ write_validate (void *addr)
   return ret;
 }
 
-static int (*mem_validate_func) (void *addr, size_t len);
 static int msync_validate (void *addr, size_t len)
 {
   if (msync (addr, len, MS_ASYNC) != 0)
@@ -179,6 +179,7 @@ static int msync_validate (void *addr, size_t len)
 
   return write_validate (addr);
 }
+#endif
 
 #ifdef HAVE_MINCORE
 static int mincore_validate (void *addr, size_t len)
@@ -196,6 +197,16 @@ static int mincore_validate (void *addr, size_t len)
 }
 #endif
 
+#ifdef CONFIG_EMBEDDED_SYS
+static int embedded_sys_validate (void *addr, size_t len)
+{
+  return -1;
+  // XXX
+}
+#endif
+
+static int (*mem_validate_func) (void *addr, size_t len);
+
 /* Initialise memory validation method. On linux kernels <2.6.21,
    mincore() returns incorrect value for MAP_PRIVATE mappings,
    such as stacks. If mincore() was available at compile time,
@@ -203,7 +214,9 @@ static int mincore_validate (void *addr, size_t len)
 HIDDEN void
 tdep_init_mem_validate (void)
 {
+#ifndef CONFIG_EMBEDDED_SYS
   open_pipe ();
+#endif
 
 #ifdef HAVE_MINCORE
   unsigned char present = 1;
@@ -222,10 +235,17 @@ tdep_init_mem_validate (void)
     }
   else
 #endif
+#ifndef CONFIG_EMBEDDED_SYS
     {
       Debug(1, "using msync to validate memory\n");
       mem_validate_func = msync_validate;
     }
+#else
+    {
+      Debug(1, "using honk XXX to validate memory\n");
+      mem_validate_func = embedded_sys_validate;
+    }
+#endif
 }
 
 /* Cache of already validated addresses */
@@ -383,6 +403,9 @@ static int
 access_fpreg (unw_addr_space_t as, unw_regnum_t reg, unw_fpreg_t *fpval, int write,
             void *arg)
 {
+#ifdef __riscv_float_abi_soft
+  return -UNW_EINVAL;
+#else
   struct cursor *c = (struct cursor *)arg;
 
   unw_fpreg_t *addr;
@@ -410,8 +433,10 @@ access_fpreg (unw_addr_space_t as, unw_regnum_t reg, unw_fpreg_t *fpval, int wri
  badreg:
   Debug (1, "bad register number %u\n", reg);
   return -UNW_EBADREG;
+#endif
 }
 
+#ifndef CONFIG_EMBEDDED_SYS
 static int
 get_static_proc_name (unw_addr_space_t as, unw_word_t ip,
                       char *buf, size_t buf_len, unw_word_t *offp,
@@ -419,6 +444,15 @@ get_static_proc_name (unw_addr_space_t as, unw_word_t ip,
 {
   return elf_w (get_proc_name) (as, getpid (), ip, buf, buf_len, offp);
 }
+#else
+static int
+get_static_proc_name (unw_addr_space_t as, unw_word_t ip,
+                      char *buf, size_t buf_len, unw_word_t *offp,
+                      void *arg)
+{
+  return -EINVAL;
+}
+#endif
 
 HIDDEN void
 riscv_local_addr_space_init (void)

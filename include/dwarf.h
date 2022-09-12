@@ -38,7 +38,7 @@ struct elf_dyn_info;
 # include "config.h"
 #endif
 
-#ifndef UNW_REMOTE_ONLY
+#if !defined(UNW_REMOTE_ONLY) && !defined(CONFIG_EMBEDDED_SYS)
   #if defined(HAVE_LINK_H)
     #include <link.h>
   #elif defined(HAVE_SYS_LINK_H)

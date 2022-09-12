@@ -174,11 +174,13 @@ unw_tdep_save_loc_t;
 typedef ucontext_t unw_tdep_context_t;
 #else
 typedef struct {
-  unw_word_t regs[32];
+  struct {
+    unw_word_t regs[32];
 #if !defined(__riscv_float_abi_soft)
-  unw_tdep_fpreg_t fpregs[32];
-  uint32_t fcsf;
+    unw_tdep_fpreg_t fpregs[32];
+    uint32_t fcsf;
 #endif
+  } uc_mcontext;
 } unw_tdep_context_t;
 #endif
 
