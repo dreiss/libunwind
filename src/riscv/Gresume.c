@@ -71,7 +71,7 @@ riscv_local_resume (unw_addr_space_t as, unw_cursor_t *cursor, void *arg)
     }
 
   unreachable();
-#else
+#elif !defined(CONFIG_EMBEDDED_SYS)
 # warning Implement me
 #endif
   return -UNW_EINVAL;

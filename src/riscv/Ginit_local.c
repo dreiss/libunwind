@@ -30,7 +30,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #ifdef UNW_REMOTE_ONLY
 
 int
-unw_init_local (unw_cursor_t *cursor, ucontext_t *uc)
+unw_init_local (unw_cursor_t *cursor, unw_context_t *uc)
 {
   return -UNW_EINVAL;
 }
@@ -38,7 +38,7 @@ unw_init_local (unw_cursor_t *cursor, ucontext_t *uc)
 #else /* !UNW_REMOTE_ONLY */
 
 static int
-unw_init_local_common(unw_cursor_t *cursor, ucontext_t *uc, unsigned use_prev_instr)
+unw_init_local_common(unw_cursor_t *cursor, unw_context_t *uc, unsigned use_prev_instr)
 {
   struct cursor *c = (struct cursor *) cursor;
 
