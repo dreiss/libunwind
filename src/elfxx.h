@@ -34,6 +34,10 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 # define elf_w(x)       _Uelf64_##x
 #endif
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #ifndef CONFIG_EMBEDDED_SYS
 
 #include <fcntl.h>

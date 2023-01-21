@@ -1,4 +1,7 @@
-#ifdef __linux__
+#if defined(UC_MCONTEXT_REGS_OFF)
+/* If this has been defined by the build, assume we know what we're doing. */
+
+#elif defined(__linux__)
 
 /* Linux-specific definitions: */
 
