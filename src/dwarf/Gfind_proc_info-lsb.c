@@ -74,6 +74,7 @@ linear_search (unw_addr_space_t as, unw_word_t ip,
   while (i++ < fde_count && addr < eh_frame_end)
     {
       fde_addr = addr;
+      Debug (15, "Trying fde %x\n", fde_addr);
       if ((ret = dwarf_extract_proc_info_from_fde (as, a, &addr, pi,
                                                    eh_frame_start,
                                                    0, 0, arg)) < 0)
@@ -566,6 +567,9 @@ struct dwarf_callback_data
     unw_dyn_info_t di_debug;    /* additional table info for .debug_frame */
   };
 
+extern uint8_t __eh_frame_region_start[];
+extern uint8_t __eh_frame_region_end[];
+
 /* ptr is a pointer to a dwarf_callback_data structure and, on entry,
    member ip contains the instruction-pointer we're looking
    for.  */
@@ -639,7 +643,8 @@ dwarf_callback (struct dl_phdr_info *info, size_t size, void *ptr)
     {
       Elf_W (Addr) eh_frame;
       Debug (1, "no .eh_frame_hdr section found\n");
-      eh_frame = dwarf_find_eh_frame_section (info);
+      //eh_frame = dwarf_find_eh_frame_section (info);
+      eh_frame = __eh_frame_region_start;
       if (eh_frame)
         {
           Debug (1, "using synthetic .eh_frame_hdr section for %s\n",
@@ -716,6 +721,7 @@ dwarf_callback (struct dl_phdr_info *info, size_t size, void *ptr)
             }
 
           eh_frame_end = max_load_addr; /* XXX can we do better? */
+          eh_frame_end = __eh_frame_region_end;
 
           if (hdr->fde_count_enc == DW_EH_PE_omit)
             fde_count = ~0UL;
@@ -809,6 +815,7 @@ dwarf_find_proc_info (unw_addr_space_t as, unw_word_t ip,
 
   if (ret > 0)
     {
+      Debug (14, "Found proc info.\n");
       if (cb_data.single_fde)
 	/* already got the result in *pi */
 	return 0;
@@ -824,8 +831,10 @@ dwarf_find_proc_info (unw_addr_space_t as, unw_word_t ip,
 	ret = dwarf_search_unwind_table_int (as, ip, &cb_data.di_debug, pi,
 					     need_unwind_info, arg);
     }
-  else
+  else {
+      Debug (14, "Did not find proc info.\n");
     ret = -UNW_ENOINFO;
+  }
 
   return ret;
 }

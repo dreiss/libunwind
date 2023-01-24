@@ -454,6 +454,8 @@ get_static_proc_name (unw_addr_space_t as, unw_word_t ip,
 }
 #endif
 
+size_t SIZE_OF_LOCAL = sizeof(local_addr_space);
+
 HIDDEN void
 riscv_local_addr_space_init (void)
 {

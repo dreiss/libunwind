@@ -146,7 +146,7 @@ target_is_big_endian()
 #ifdef DEBUG
 # define UNW_DEBUG      1
 #else
-# define UNW_DEBUG      0
+# define UNW_DEBUG      1
 #endif
 
 #ifdef _POSIX_THREADS
@@ -291,12 +291,12 @@ do {                                                                    \
       int _n = level;                                                   \
       if (_n > 16)                                                      \
         _n = 16;                                                        \
-      fprintf (stderr, "%*c>%s: ", _n, ' ', __FUNCTION__);              \
-      fprintf (stderr, /* format */ __VA_ARGS__);                       \
+      printk ("%*c>%s: ", _n, ' ', __FUNCTION__);              \
+      printk (/* format */ __VA_ARGS__);                       \
     }                                                                   \
 } while (0)
 # define Dprintf(/* format */ ...)                                      \
-  fprintf (stderr, /* format */ __VA_ARGS__)
+  printk (/* format */ __VA_ARGS__)
 #else
 # define Debug(level, /* format */ ...)
 # define Dprintf( /* format */ ...)

@@ -110,7 +110,7 @@ HIDDEN void
 mempool_init (struct mempool *pool, size_t obj_size, size_t reserve)
 {
   if (pg_size == 0)
-    pg_size = getpagesize ();
+    pg_size = 4096 /* XXX */;
 
   memset (pool, 0, sizeof (*pool));
 

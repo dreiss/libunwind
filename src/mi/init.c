@@ -39,10 +39,14 @@ static const char rcsid[] UNUSED =
 long unwi_debug_level;
 
 #endif /* UNW_DEBUG */
+
 long unw_page_size;
 static void
 unw_init_page_size ()
 {
+#ifdef CONFIG_EMBEDDED_SYS
+  unw_page_size = EMBEDDED_PAGE_SIZE;
+#else
   errno = 0;
   long result = sysconf (_SC_PAGESIZE);
   if (result == -1)
@@ -62,22 +66,24 @@ unw_init_page_size ()
     {
       unw_page_size = result;
     }
+#endif /* CONFIG_EMBEDDED_SYS */
 }
 
 HIDDEN void
 mi_init (void)
 {
 #if UNW_DEBUG
-  const char *str = getenv ("UNW_DEBUG_LEVEL");
+  //const char *str = getenv ("UNW_DEBUG_LEVEL");
 
-  if (str)
-    unwi_debug_level = atoi (str);
+  //if (str)
+  //  unwi_debug_level = atoi (str);
 
-  if (unwi_debug_level > 0)
-    {
-      setbuf (stdout, NULL);
-      setbuf (stderr, NULL);
-    }
+  //if (unwi_debug_level > 0)
+  //  {
+  //    setbuf (stdout, NULL);
+  //    setbuf (stderr, NULL);
+  //  }
+  unwi_debug_level = 0;
 #endif
   unw_init_page_size();
   assert(sizeof(struct cursor) <= sizeof(unw_cursor_t));
